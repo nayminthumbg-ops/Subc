@@ -3,122 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VPN Access Portal</title>
+    <title>VPN Premium Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom Scrollbar and Transitions */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        /* Glassmorphism & Custom Transitions */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #e0e7ff 100%);
+            background-attachment: fixed;
+        }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+<body class="text-slate-800 min-h-screen flex items-center justify-center p-4 antialiased">
 
-    <!-- Admin Panel (Default View) -->
-    <div id="admin-panel" class="hidden w-full max-w-lg bg-slate-800 p-8 rounded-2xl shadow-2xl fade-in border border-slate-700">
-        <div class="flex items-center justify-center mb-6">
-            <svg class="w-10 h-10 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.078 2.027-.231 3.021M15.531 15.531a14.01 14.01 0 01-1.637 2.228M12 21a9.003 9.003 0 008.354-5.646"></path></svg>
-            <h2 class="text-2xl font-bold">VPN Admin Panel</h2>
-        </div>
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="hidden w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-6 fade-in">
         
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-400 mb-1">User Name (အမည်)</label>
-                <input type="text" id="userName" placeholder="ဥပမာ - မောင်မောင်" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-400 mb-1">Raw VPN Key (ကီးအကြမ်း)</label>
-                <input type="text" id="rawKey" placeholder="vless://..." class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-400 mb-1">Expiry Date (သက်တမ်းကုန်မည့်ရက်)</label>
-                <input type="date" id="expDate" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-white" style="color-scheme: dark;">
+        <!-- Create Link Section -->
+        <div class="glass-panel p-8 rounded-3xl">
+            <div class="flex items-center mb-6">
+                <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                <h2 class="text-2xl font-bold text-slate-800">Create Key Link</h2>
             </div>
             
-            <button onclick="generateLink()" class="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-[1.02]">
-                Generate Link
-            </button>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">User Name (အမည်)</label>
+                    <input type="text" id="userName" placeholder="ဥပမာ - မောင်မောင်" class="w-full px-4 py-3 glass-input rounded-xl transition outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Raw VPN Key (ကီးအကြမ်း)</label>
+                    <input type="text" id="rawKey" placeholder="ss://... သို့မဟုတ် vless://..." class="w-full px-4 py-3 glass-input rounded-xl transition outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Expiry Date (သက်တမ်းကုန်မည့်ရက်)</label>
+                    <input type="date" id="expDate" class="w-full px-4 py-3 glass-input rounded-xl transition outline-none text-slate-800">
+                </div>
+                
+                <button onclick="generateLink()" class="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5">
+                    Generate Link & Save
+                </button>
+            </div>
+
+            <div id="result-container" class="mt-6 hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <p class="text-sm text-emerald-700 mb-2 font-semibold flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    လင့်ခ်ဖန်တီးပြီးပါပြီ (မိနစ် ၃၀ အတွင်း အသုံးပြုပါ)
+                </p>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="generatedLink" class="w-full px-3 py-2 bg-white text-slate-600 border border-emerald-100 rounded-lg text-sm outline-none" readonly>
+                    <button onclick="copyLink()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg transition" title="Copy to Clipboard">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div id="result-container" class="mt-8 hidden p-5 bg-slate-900 border border-green-500/30 rounded-lg">
-            <p class="text-sm text-green-400 mb-2 font-semibold">✅ User အတွက် လင့်ခ်ရပါပြီ-</p>
-            <div class="flex items-center gap-2">
-                <input type="text" id="generatedLink" class="w-full px-3 py-2 bg-slate-800 text-slate-300 border border-slate-700 rounded text-sm outline-none" readonly>
-                <button onclick="copyLink()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded transition" title="Copy to Clipboard">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                </button>
+        <!-- Records History Section -->
+        <div class="glass-panel p-8 rounded-3xl flex flex-col h-[500px]">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <svg class="w-7 h-7 text-slate-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    <h2 class="text-xl font-bold text-slate-800">Member Records</h2>
+                </div>
+                <span id="record-count" class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">0 Users</span>
+            </div>
+            
+            <div class="overflow-y-auto pr-2 flex-grow custom-scrollbar" id="records-list">
+                <!-- Records will be injected here via JS -->
             </div>
         </div>
     </div>
 
     <!-- User Portal (Token View) -->
-    <div id="user-panel" class="hidden w-full max-w-sm bg-slate-800 p-8 rounded-2xl shadow-2xl text-center fade-in border border-slate-700">
-        <div class="w-20 h-20 mx-auto bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30">
-            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+    <div id="user-panel" class="hidden w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center fade-in relative overflow-hidden">
+        <!-- Decorative bg glow -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl -z-10"></div>
+
+        <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-emerald-500/30 border-4 border-white/50">
+            <svg class="w-12 h-12 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
         </div>
         
-        <h2 id="greetName" class="text-3xl font-bold mb-2 text-white">Hello, ...</h2>
-        <div class="inline-block bg-slate-900 px-4 py-1.5 rounded-full mb-8 border border-slate-700">
-            <p id="expText" class="text-slate-300 text-sm font-medium">Expires on: ...</p>
+        <h2 id="greetName" class="text-3xl font-extrabold mb-2 text-slate-800 tracking-tight">Hello, ...</h2>
+        <div class="inline-block bg-white/80 px-5 py-2 rounded-full mb-8 border border-slate-200 shadow-sm">
+            <p id="expText" class="text-slate-600 text-sm font-semibold">Expires: ...</p>
         </div>
 
-        <a id="connectBtn" href="#" class="block w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition duration-300 transform hover:-translate-y-1">
+        <a id="connectBtn" href="#" class="block w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-4 px-4 rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.3)] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(16,185,129,0.4)]">
             <span class="flex items-center justify-center text-lg">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                1-Click Connect to App
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                Connect
             </span>
         </a>
 
         <!-- Instructions in Burmese -->
-        <div class="mt-10 text-left bg-slate-900/50 p-5 rounded-xl border border-slate-700">
-            <h3 class="text-base font-semibold mb-4 text-blue-400 flex items-center">
+        <div class="mt-10 text-left bg-white/50 p-6 rounded-2xl border border-white/60 shadow-inner">
+            <h3 class="text-base font-bold mb-4 text-emerald-700 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 အသုံးပြုနည်း
             </h3>
-            <ul class="text-sm text-slate-300 space-y-3">
+            <ul class="text-sm text-slate-700 space-y-4 font-medium">
                 <li class="flex items-start">
-                    <span class="bg-blue-500/20 text-blue-400 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0 font-bold text-xs">၁</span>
-                    <span>အထက်ပါ <strong class="text-white">1-Click Connect</strong> ကို နှိပ်ပါ။</span>
+                    <span class="bg-emerald-100 text-emerald-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 font-bold text-xs shadow-sm">၁</span>
+                    <span class="leading-relaxed">အထက်ပါ <strong class="text-emerald-700">Connect</strong> ကို နှိပ်ပါ။</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="bg-blue-500/20 text-blue-400 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0 font-bold text-xs">၂</span>
-                    <span>မိမိအသုံးပြုမည့် VPN App (Hiddify, V2Ray သို့မဟုတ် Outline) ကို ရွေးချယ်ဖွင့်ပါ။</span>
+                    <span class="bg-emerald-100 text-emerald-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 font-bold text-xs shadow-sm">၂</span>
+                    <span class="leading-relaxed">မိမိဖုန်းရှိ VPN App (Outline, Hiddify သို့မဟုတ် V2Ray) ပွင့်လာပါမည်။</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="bg-blue-500/20 text-blue-400 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0 font-bold text-xs">၃</span>
-                    <span>App အတွင်းသို့ Key အလိုအလျောက် ဝင်ရောက်သွားပါမည်။</span>
+                    <span class="bg-emerald-100 text-emerald-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 font-bold text-xs shadow-sm">၃</span>
+                    <span class="leading-relaxed">"Open" နိပ်ပြီး App အတွင်းသို့ Key အလိုအလျောက် ဝင်ရောက်သွားပါမည်။</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-emerald-100 text-emerald-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 font-bold text-xs shadow-sm">၃</span>
+                    <span class="leading-relaxed">အဆင်မပြေပါက admin ကိုဆက်သွယ်ပေးပါ။</span>
                 </li>
             </ul>
         </div>
     </div>
 
     <!-- Error Message -->
-    <div id="error-panel" class="hidden text-center fade-in max-w-sm">
-        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-        <h2 class="text-2xl font-bold text-red-400 mb-2">Error</h2>
-        <p class="text-slate-400">လင့်ခ် မှားယွင်းနေပါသည် သို့မဟုတ် ပျက်စီးနေပါသည်။ ကျေးဇူးပြု၍ လင့်ခ်အမှန်တောင်းခံပါ။</p>
+    <div id="error-panel" class="hidden text-center fade-in max-w-sm glass-panel p-8 rounded-3xl">
+        <div class="w-20 h-20 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <h2 id="error-title" class="text-2xl font-bold text-slate-800 mb-2">Error</h2>
+        <p id="error-msg" class="text-slate-600">လင့်ခ် မှားယွင်းနေပါသည် သို့မဟုတ် ပျက်စီးနေပါသည်။ ကျေးဇူးပြု၍ Admin ထံ လင့်ခ်အမှန်တောင်းခံပါ။</p>
     </div>
 
+    <style>
+        /* Custom Scrollbar for records list */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); rounded-full; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+    </style>
+
     <script>
-        // Unicode (မြန်မာစာ) ကို မှန်ကန်စွာ Base64 ပြောင်းပေးသည့် Function
+        // --- Core Functions ---
         function encodeBase64Unicode(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-                function toSolidBytes(match, p1) {
-                    return String.fromCharCode('0x' + p1);
-            }));
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) { return String.fromCharCode('0x' + p1); }));
         }
 
-        // Base64 မှ Unicode (မြန်မာစာ) ပြန်ပြောင်းပေးသည့် Function
         function decodeBase64Unicode(str) {
-            return decodeURIComponent(atob(str).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
+            return decodeURIComponent(atob(str).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''));
         }
 
-        // [Admin Mode] လင့်ခ်ထုတ်ပေးသည့် လုပ်ငန်းစဉ်
+        // --- History Records Logic (Local Storage) ---
+        function getRecords() {
+            const records = localStorage.getItem('vpnRecords');
+            return records ? JSON.parse(records) : [];
+        }
+
+        function saveRecord(record) {
+            const records = getRecords();
+            records.unshift(record); // Add to beginning
+            localStorage.setItem('vpnRecords', JSON.stringify(records));
+            renderRecords();
+        }
+
+        function deleteRecord(id) {
+            if(confirm("ဤမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?")) {
+                let records = getRecords();
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('vpnRecords', JSON.stringify(records));
+                renderRecords();
+            }
+        }
+
+        function renderRecords() {
+            const records = getRecords();
+            const listContainer = document.getElementById('records-list');
+            document.getElementById('record-count').innerText = `${records.length} Users`;
+            
+            if(records.length === 0) {
+                listContainer.innerHTML = `<div class="text-center text-slate-400 mt-10 text-sm">မှတ်တမ်း မရှိသေးပါ</div>`;
+                return;
+            }
+
+            let html = '';
+            records.forEach(r => {
+                html += `
+                <div class="bg-white/60 border border-white/80 p-4 rounded-2xl mb-3 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-slate-800">${r.name}</h4>
+                        <button onclick="deleteRecord(${r.id})" class="text-red-400 hover:text-red-600 p-1 bg-red-50 rounded-md transition" title="Delete">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    <div class="text-xs text-slate-500 mb-3 space-y-1">
+                        <p><span class="font-medium text-slate-600">ရောင်းချရက်:</span> ${r.saleDate}</p>
+                        <p><span class="font-medium text-slate-600">ကုန်ဆုံးရက်:</span> ${r.expDate}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" value="${r.link}" class="w-full text-xs px-2 py-1.5 bg-slate-100 text-slate-500 rounded border border-slate-200 outline-none" readonly>
+                    </div>
+                </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        // --- Generate Link Logic ---
         function generateLink() {
             const name = document.getElementById('userName').value.trim();
             const rawKey = document.getElementById('rawKey').value.trim();
@@ -129,22 +237,34 @@
                 return;
             }
 
-            // Data ကို JSON အဖြစ်ပြောင်းခြင်း
-            const dataObj = { n: name, k: rawKey, e: expDate };
+            // c: ဖန်တီးသည့်အချိန် (Timestamp) ကို Date.now() ဖြင့် မှတ်သားခြင်း
+            const dataObj = { n: name, k: rawKey, e: expDate, c: Date.now() };
             const jsonString = JSON.stringify(dataObj);
-            
-            // Base64 ဖြင့် လျှို့ဝှက်ပြောင်းလဲခြင်း
             const token = encodeBase64Unicode(jsonString);
 
-            // လက်ရှိ URL နောက်တွင် ?token= ထည့်၍ လင့်ခ်တည်ဆောက်ခြင်း
             const baseUrl = window.location.href.split('?')[0];
             const finalUrl = `${baseUrl}?token=${token}`;
 
             document.getElementById('generatedLink').value = finalUrl;
             document.getElementById('result-container').classList.remove('hidden');
+
+            // Save to History Records
+            const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const formattedExp = new Date(expDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            
+            saveRecord({
+                id: Date.now(),
+                name: name,
+                saleDate: today,
+                expDate: formattedExp,
+                link: finalUrl
+            });
+
+            // Clear inputs
+            document.getElementById('userName').value = '';
+            document.getElementById('rawKey').value = '';
         }
 
-        // Copy ခလုတ်
         function copyLink() {
             const linkInput = document.getElementById('generatedLink');
             linkInput.select();
@@ -152,39 +272,51 @@
             alert("လင့်ခ်ကို Copy ကူးယူပြီးပါပြီ!");
         }
 
-        // [App စတင်ချိန်] URL ကို စစ်ဆေးခြင်း
+        // --- App Initialization (Check Token & Expiry) ---
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
 
             if (!token) {
-                // Token မပါလျှင် Admin Panel ကိုပြမည်
+                // Admin Flow (No Token - လင့်ခ်မပါလျှင် Admin Panel ကို တိုက်ရိုက်ပြမည်)
                 document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.add('grid');
+                renderRecords();
             } else {
-                // Token ပါလျှင် User Panel ပြရန်ကြိုးစားမည်
+                // User Flow (Has Token)
                 try {
                     const decodedStr = decodeBase64Unicode(token);
                     const userData = JSON.parse(decodedStr);
 
-                    // UI Data ထည့်သွင်းခြင်း
-                    document.getElementById('greetName').innerText = "Hello, " + userData.n;
-                    
-                    // Date ကို လှပစွာဖော်ပြခြင်း (Optional format)
+                    // မိနစ် ၃၀ သက်တမ်း စစ်ဆေးခြင်း
+                    const creationTime = userData.c || 0;
+                    const currentTime = Date.now();
+                    const thirtyMinutesInMillis = 30 * 60 * 1000;
+
+                    if (currentTime - creationTime > thirtyMinutesInMillis) {
+                        // မိနစ် ၃၀ ကျော်လွန်သွားပါက (Expired)
+                        document.getElementById('error-title').innerText = "Link Expired";
+                        document.getElementById('error-title').classList.replace('text-slate-800', 'text-orange-500');
+                        document.getElementById('error-msg').innerText = "ဤလင့်ခ်မှာ သက်တမ်းကုန်ဆုံးသွားပါပြီ (မိနစ် ၃၀ ကျော်လွန်သွားပါသည်)။ လင့်ခ်အသစ် ပြန်လည်တောင်းခံပါ။";
+                        document.getElementById('error-panel').classList.remove('hidden');
+                        return;
+                    }
+
+                    document.getElementById('greetName').innerText = "Hi, " + userData.n;
                     const dateObj = new Date(userData.e);
                     const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-                    document.getElementById('expText').innerText = "Expires on: " + formattedDate;
+                    document.getElementById('expText').innerText = "Expires: " + formattedDate;
 
-                    // Deep Link URL တည်ဆောက်ခြင်း (Name နှင့် Exp ကို raw key နောက်တွဲထည့်ခြင်း)
-                    // ဥပမာ- vless://....#Maung Maung | Exp: 2027-01-01
+                    // Deep Link logic specifically formatting for ss:// (Outline) & others
                     const appendedString = `${userData.n} | Exp: ${formattedDate}`;
+                    // URI encode the name/date so Outline doesn't break
                     const finalKey = `${userData.k}#${encodeURIComponent(appendedString)}`;
                     
                     document.getElementById('connectBtn').href = finalKey;
-
                     document.getElementById('user-panel').classList.remove('hidden');
                 } catch (error) {
+                    // လင့်ခ်ဖောက်စစ်ခြင်း သို့မဟုတ် ပျက်စီးနေခြင်း (Invalid Token)
                     console.error("Token decoding error:", error);
-                    // လင့်ခ်မှားလျှင် Error ပြမည်
                     document.getElementById('error-panel').classList.remove('hidden');
                 }
             }
